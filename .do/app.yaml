@@ -1,0 +1,28 @@
+name: debating-agents
+services:
+- name: web
+  source_dir: /
+  github:
+    repo: your-username/debating-agents
+    branch: main
+  run_command: npm start
+  build_command: npm run build
+  environment_slug: node-js
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  http_port: 3000
+  envs:
+  - key: NODE_ENV
+    value: production
+  - key: AGENT_A_BASE_URL
+    value: ${AGENT_A_BASE_URL}
+  - key: AGENT_A_KEY
+    value: ${AGENT_A_KEY}
+  - key: AGENT_B_BASE_URL
+    value: ${AGENT_B_BASE_URL}
+  - key: AGENT_B_KEY
+    value: ${AGENT_B_KEY}
+  - key: AGENT_MEDIATOR_BASE_URL
+    value: ${AGENT_MEDIATOR_BASE_URL}
+  - key: AGENT_MEDIATOR_KEY
+    value: ${AGENT_MEDIATOR_KEY}
