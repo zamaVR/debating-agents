@@ -8,7 +8,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = parseInt(process.env.PORT || '3000', 10);
+
+// Add error handling for the server
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  process.exit(1);
+});
 
 // Middleware
 app.use(express.json());
@@ -53,12 +64,23 @@ app.post('/api/debate', async (req, res) => {
   }
 });
 
+// Health check endpoint for Digital Ocean
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
+});
+
 // Serve the main page
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📝 Debate API available at http://localhost:${PORT}/api/debate`);
+  console.log(`🏥 Health check available at http://localhost:${PORT}/health`);
+  console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
 });
