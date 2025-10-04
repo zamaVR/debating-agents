@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debating Agents</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f7f7f8;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 1rem;
+        }
+
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem 0;
+            margin-bottom: 1rem;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message-header {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .message-content {
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            line-height: 1.5;
+            white-space: pre-wrap;
+            max-width: 70%;
+        }
+
+        .message.agent-a {
+            align-items: flex-start;
+        }
+
+        .message.agent-a .message-content {
+            background: #e3f2fd;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .message.agent-a .message-header {
+            color: #3b82f6;
+        }
+
+        .message.agent-b {
+            align-items: flex-end;
+        }
+
+        .message.agent-b .message-content {
+            background: #ffebee;
+            border-right: 4px solid #ef4444;
+        }
+
+        .message.agent-b .message-header {
+            color: #ef4444;
+            text-align: right;
+        }
+
+        .message.user {
+            align-items: flex-end;
+        }
+
+        .message.user .message-content {
+            background: #3b82f6;
+            color: white;
+            max-width: 80%;
+        }
+
+        .message.user .message-header {
+            text-align: right;
+            color: #3b82f6;
+        }
+
+        .message.mediator {
+            align-items: center;
+        }
+
+        .message.mediator .message-content {
+            background: white;
+            border-left: 4px solid #8b5cf6;
+            border-right: 4px solid #8b5cf6;
+            max-width: 80%;
+        }
+
+        .message.mediator .message-header {
+            text-align: center;
+            color: #8b5cf6;
+        }
+
+        .moderator-note {
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white;
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+        }
+
+        .moderator-note h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .moderator-note p {
+            margin: 0;
+            line-height: 1.5;
+            opacity: 0.95;
+        }
+
+        .suggested-topics {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .suggested-topics h3 {
+            margin-bottom: 0.75rem;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .topic-button {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: #f8f9fa;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .topic-button:hover {
+            background: #e9ecef;
+            border-color: #3b82f6;
+        }
+
+        .topic-button:last-child {
+            margin-bottom: 0;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 0.5rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-field:focus {
+            border-color: #3b82f6;
+        }
+
+        .send-button {
+            padding: 0.75rem 1.5rem;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .send-button:hover:not(:disabled) {
+            background: #2563eb;
+        }
+
+        .send-button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .loading::after {
+            content: '';
+            width: 16px;
+            height: 16px;
+            border: 2px solid #e5e5e5;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            max-width: 70%;
+        }
+
+        .typing-indicator.agent-a {
+            align-self: flex-start;
+            background: #e3f2fd;
+        }
+
+        .typing-indicator.agent-b {
+            align-self: flex-end;
+            background: #ffebee;
+        }
+
+        .typing-indicator.mediator {
+            align-self: center;
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white;
+        }
+
+        .typing-indicator.mediator span {
+            color: white;
+        }
+
+        .typing-indicator.mediator .typing-dots span {
+            background: white;
+        }
+
+        .typing-indicator span {
+            color: #6b7280;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 2px;
+        }
+
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #6b7280;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0s; }
+
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid #fecaca;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .citations {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .citation {
+            background: #f3f4f6;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            margin-right: 0.5rem;
+            margin-bottom: 0.25rem;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Debating Agents</h1>
+    </div>
+
+    <div class="chat-container">
+        <div class="chat-area" id="chatArea">
+            <div class="suggested-topics" id="suggestedTopics">
+                <h3>Choose a debate topic:</h3>
+                <button class="topic-button" data-topic="Does 'The Grand Inquisitor' claim that freedom is a burden rather than a gift?">
+                    Does 'The Grand Inquisitor' claim that freedom is a burden rather than a gift?
+                </button>
+                <button class="topic-button" data-topic="Is Raskolnikov's crime in Crime and Punishment justified by his theory of extraordinary men?">
+                    Is Raskolnikov's crime in Crime and Punishment justified by his theory of extraordinary men?
+                </button>
+                <button class="topic-button" data-topic="Does Dostoevsky present Sonya as a true moral exemplar in Crime and Punishment?">
+                    Does Dostoevsky present Sonya as a true moral exemplar in Crime and Punishment?
+                </button>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <input type="text" class="input-field" id="messageInput" placeholder="Enter a custom debate topic..." />
+            <button class="send-button" id="sendButton">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const chatArea = document.getElementById('chatArea');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const suggestedTopics = document.getElementById('suggestedTopics');
+
+        let isDebateRunning = false;
+
+        // Handle suggested topic clicks
+        document.querySelectorAll('.topic-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const topic = button.dataset.topic;
+                startDebate(topic);
+            });
+        });
+
+        // Handle custom topic submission
+        sendButton.addEventListener('click', () => {
+            const topic = messageInput.value.trim();
+            if (topic && !isDebateRunning) {
+                startDebate(topic);
+            }
+        });
+
+        // Handle Enter key
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !isDebateRunning) {
+                const topic = messageInput.value.trim();
+                if (topic) {
+                    startDebate(topic);
+                }
+            }
+        });
+
+        function startDebate(topic) {
+            if (isDebateRunning) return;
+
+            isDebateRunning = true;
+            sendButton.disabled = true;
+            messageInput.disabled = true;
+            suggestedTopics.classList.add('hidden');
+
+            // Clear previous messages and get new random names
+            chatArea.innerHTML = '';
+            debaterNames = getRandomDebaterNames();
+            
+            // Reset conversation state
+            conversationState = {
+                waitingForMediator: false,
+                waitingForDebaters: false,
+                currentRound: 0,
+                lastMessageRole: null
+            };
+
+            // Add user message
+            addMessage('user', 'You', topic);
+
+            // Add loading message
+            const loadingId = addMessage('loading', 'System', 'Starting debate...');
+
+            // Start debate with Server-Sent Events
+            const eventSource = new EventSource('/api/debate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ topic })
+            });
+
+            // This won't work with EventSource for POST requests
+            // Let's use fetch with streaming instead
+            fetch('/api/debate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ topic })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                
+                // Remove loading message
+                const loadingElement = document.getElementById(loadingId);
+                if (loadingElement) {
+                    loadingElement.remove();
+                }
+
+                function readStream() {
+                    return reader.read().then(({ done, value }) => {
+                        if (done) {
+                            isDebateRunning = false;
+                            sendButton.disabled = false;
+                            messageInput.disabled = false;
+                            messageInput.value = '';
+                            return;
+                        }
+
+                        const chunk = decoder.decode(value, { stream: true });
+                        const lines = chunk.split('\n');
+                        
+                        for (const line of lines) {
+                            if (line.startsWith('data: ')) {
+                                try {
+                                    const data = JSON.parse(line.slice(6));
+                                    handleStreamEvent(data);
+                                } catch (e) {
+                                    console.error('Error parsing SSE data:', e);
+                                }
+                            }
+                        }
+
+                        return readStream();
+                    });
+                }
+
+                return readStream();
+            })
+            .catch(error => {
+                // Remove loading message
+                const loadingElement = document.getElementById(loadingId);
+                if (loadingElement) {
+                    loadingElement.remove();
+                }
+
+                console.error('Error:', error);
+                addMessage('error', 'Error', 'Failed to connect to debate service');
+                
+                isDebateRunning = false;
+                sendButton.disabled = false;
+                messageInput.disabled = false;
+                messageInput.value = '';
+            });
+        }
+
+        let currentTypingIndicators = [];
+        let debaterNames = { A: '', B: '' };
+        let conversationState = {
+            waitingForMediator: false,
+            waitingForDebaters: false,
+            currentRound: 0,
+            lastMessageRole: null
+        };
+
+        // 18th century names for debaters (no captains, no duplicates)
+        const eighteenthCenturyNames = [
+            'Sir Bartholomew Thistlewaite', 'Lord Cornelius Pumpernickel', 'Professor Ignatius Quibble',
+            'Dr. Phineas Featherbottom', 'Reverend Mortimer Twaddle', 'Colonel Archibald Fiddlefaddle',
+            'Sir Percival Bumblebee', 'Dr. Cornelius Wobblebottom', 'Lord Thaddeus Pifflepuff',
+            'Professor Barnabas Noodlehead', 'Reverend Septimus Flibbertigibbet', 'Colonel Horatio Scroggins',
+            'Sir Algernon Piffle', 'Dr. Erasmus Bumbleberry', 'Lord Cornelius Doodlebug',
+            'Professor Thaddeus Wobble', 'Reverend Marmaduke Twiddle', 'Sir Reginald Pifflepants',
+            'Dr. Barnabas Wobblebottom', 'Lord Mortimer Fiddlefaddle', 'Professor Cornelius Twaddle',
+            'Reverend Archibald Bumblebee', 'Sir Thaddeus Quibble', 'Dr. Percival Pifflepuff',
+            'Lord Ignatius Scroggins', 'Professor Erasmus Twiddle', 'Reverend Barnabas Fiddlefaddle',
+            'Sir Cornelius Wobble', 'Dr. Mortimer Pumpernickel', 'Lord Percival Featherbottom'
+        ];
+
+        function getRandomDebaterNames() {
+            const shuffled = [...eighteenthCenturyNames].sort(() => 0.5 - Math.random());
+            return {
+                A: shuffled[0],
+                B: shuffled[1]
+            };
+        }
+
+        function handleStreamEvent(data) {
+            switch (data.type) {
+                case 'start':
+                    console.log('Debate started:', data.topic);
+                    break;
+                case 'message':
+                    displayDebateMessage(data.entry);
+                    break;
+                case 'complete':
+                    console.log('Debate completed');
+                    // Remove any remaining typing indicators
+                    currentTypingIndicators.forEach(id => {
+                        const element = document.getElementById(id);
+                        if (element) element.remove();
+                    });
+                    currentTypingIndicators = [];
+                    break;
+                case 'error':
+                    addMessage('error', 'Error', data.message);
+                    break;
+            }
+        }
+
+        function displayDebateMessage(entry) {
+            // Remove any typing indicators for this agent
+            removeTypingIndicator(entry.role);
+            
+            // Update conversation state
+            conversationState.lastMessageRole = entry.role;
+
+            if (entry.role === 'Mediator' && entry.phase === 'Round Recap') {
+                addModeratorNote(entry);
+                conversationState.waitingForMediator = false;
+                conversationState.waitingForDebaters = false;
+            } else if (entry.role === 'Mediator' && entry.phase === 'Next Round') {
+                addModeratorNote(entry);
+                conversationState.waitingForMediator = false;
+                conversationState.waitingForDebaters = true;
+                conversationState.currentRound++;
+            } else if (entry.role === 'Mediator' && entry.phase === 'Framing') {
+                // Show framing as a regular message
+                addMessage('mediator', 'Mediator', entry.text, entry.citations);
+                conversationState.waitingForMediator = false;
+                conversationState.waitingForDebaters = true;
+                conversationState.currentRound = 1;
+            } else {
+                let sender = '';
+                let className = '';
+
+                switch (entry.role) {
+                    case 'Mediator':
+                        sender = 'Mediator';
+                        className = 'mediator';
+                        break;
+                    case 'A':
+                        sender = debaterNames.A;
+                        className = 'agent-a';
+                        break;
+                    case 'B':
+                        sender = debaterNames.B;
+                        className = 'agent-b';
+                        break;
+                }
+
+                addMessage(className, sender, entry.text, entry.citations);
+            }
+
+            // Controlled flow for typing indicators
+            handleTypingIndicatorFlow(entry);
+        }
+
+        function handleTypingIndicatorFlow(entry) {
+            // Only show typing indicators when appropriate
+            if (entry.role === 'A' && conversationState.waitingForDebaters) {
+                // Debater A just responded, show Debater B thinking
+                setTimeout(() => {
+                    if (conversationState.waitingForDebaters) {
+                        showTypingIndicator('B');
+                    }
+                }, 1000 + Math.random() * 1000);
+            } else if (entry.role === 'B' && conversationState.waitingForDebaters) {
+                // Debater B just responded, show Mediator thinking
+                conversationState.waitingForDebaters = false;
+                conversationState.waitingForMediator = true;
+                setTimeout(() => {
+                    if (conversationState.waitingForMediator) {
+                        showTypingIndicator('Mediator');
+                    }
+                }, 1000 + Math.random() * 1000);
+            } else if (entry.role === 'Mediator' && entry.phase === 'Framing') {
+                // Initial framing complete, show debaters thinking
+                conversationState.waitingForDebaters = true;
+                setTimeout(() => {
+                    if (conversationState.waitingForDebaters) {
+                        showTypingIndicator('A');
+                        setTimeout(() => {
+                            if (conversationState.waitingForDebaters) {
+                                showTypingIndicator('B');
+                            }
+                        }, 500 + Math.random() * 500);
+                    }
+                }, 1000 + Math.random() * 1000);
+            } else if (entry.role === 'Mediator' && entry.phase === 'Next Round') {
+                // Next round instructions complete, show debaters thinking
+                conversationState.waitingForDebaters = true;
+                setTimeout(() => {
+                    if (conversationState.waitingForDebaters) {
+                        showTypingIndicator('A');
+                        setTimeout(() => {
+                            if (conversationState.waitingForDebaters) {
+                                showTypingIndicator('B');
+                            }
+                        }, 500 + Math.random() * 500);
+                    }
+                }, 1000 + Math.random() * 1000);
+            }
+        }
+
+        function addModeratorNote(entry) {
+            const noteDiv = document.createElement('div');
+            noteDiv.className = 'moderator-note';
+            
+            let title, cleanText;
+            
+            if (entry.phase === 'Round Recap') {
+                // Use the conversation state round number
+                title = `Round ${conversationState.currentRound} Recap`;
+                cleanText = entry.text.replace(/\*\*/g, '').trim();
+            } else if (entry.phase === 'Next Round') {
+                // Use the next round number
+                title = `Round ${conversationState.currentRound + 1}`;
+                cleanText = entry.text.replace(/\*\*/g, '').trim();
+            } else {
+                title = `Round ${conversationState.currentRound}`;
+                cleanText = entry.text.replace(/\*\*/g, '').trim();
+            }
+
+            noteDiv.innerHTML = `
+                <h3>${title}</h3>
+                <p>${cleanText}</p>
+            `;
+
+            chatArea.appendChild(noteDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function showTypingIndicator(agentRole) {
+            const typingId = 'typing-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+            const typingDiv = document.createElement('div');
+            
+            let className, agentName, thinkingText;
+            
+            if (agentRole === 'A') {
+                className = 'agent-a';
+                agentName = debaterNames.A;
+                thinkingText = 'thinking';
+            } else if (agentRole === 'B') {
+                className = 'agent-b';
+                agentName = debaterNames.B;
+                thinkingText = 'thinking';
+            } else if (agentRole === 'Mediator') {
+                className = 'mediator';
+                agentName = 'Mediator';
+                thinkingText = 'considering';
+            }
+            
+            typingDiv.className = `typing-indicator ${className}`;
+            typingDiv.id = typingId;
+
+            typingDiv.innerHTML = `
+                <span>${agentName} is ${thinkingText}</span>
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            `;
+
+            chatArea.appendChild(typingDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+            currentTypingIndicators.push(typingId);
+        }
+
+        function removeTypingIndicator(agentRole) {
+            let agentClass;
+            if (agentRole === 'A') {
+                agentClass = 'agent-a';
+            } else if (agentRole === 'B') {
+                agentClass = 'agent-b';
+            } else if (agentRole === 'Mediator') {
+                agentClass = 'mediator';
+            }
+            
+            const typingElements = chatArea.querySelectorAll(`.typing-indicator.${agentClass}`);
+            typingElements.forEach(element => {
+                element.remove();
+                const index = currentTypingIndicators.indexOf(element.id);
+                if (index > -1) {
+                    currentTypingIndicators.splice(index, 1);
+                }
+            });
+        }
+
+        function addMessage(type, sender, content, citations = []) {
+            const messageId = 'msg-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.id = messageId;
+
+            const headerDiv = document.createElement('div');
+            headerDiv.className = 'message-header';
+            headerDiv.textContent = sender;
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = content;
+
+            messageDiv.appendChild(headerDiv);
+            messageDiv.appendChild(contentDiv);
+
+            if (citations && citations.length > 0) {
+                const citationsDiv = document.createElement('div');
+                citationsDiv.className = 'citations';
+                citations.forEach(citation => {
+                    const citationSpan = document.createElement('span');
+                    citationSpan.className = 'citation';
+                    citationSpan.textContent = `[${citation.filename}, chunk ${citation.chunk}]`;
+                    citationsDiv.appendChild(citationSpan);
+                });
+                messageDiv.appendChild(citationsDiv);
+            }
+
+            chatArea.appendChild(messageDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+
+            return messageId;
+        }
+
+    </script>
+</body>
+</html>
+
