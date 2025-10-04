@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
-import { runDebateStreaming } from './debate-api';
+import { runDebateStreaming } from './debate-api.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
