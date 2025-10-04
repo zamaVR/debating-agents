@@ -6,7 +6,7 @@ import { OpenAI } from 'openai';
 type Agent = { name: 'A'|'B'|'M'; baseURL: string; key: string; temp: number; maxTokens: number };
 const A: Agent = { name:'A', baseURL: process.env.AGENT_A_BASE_URL!, key: process.env.AGENT_A_KEY!, temp:0.35, maxTokens:800 };
 const B: Agent = { name:'B', baseURL: process.env.AGENT_B_BASE_URL!, key: process.env.AGENT_B_KEY!, temp:0.35, maxTokens:800 };
-const M: Agent = { name:'Mediator', baseURL: process.env.AGENT_MEDIATOR_BASE_URL!, key: process.env.AGENT_MEDIATOR_KEY!, temp:0.3, maxTokens:700 };
+const M: Agent = { name:'M', baseURL: process.env.AGENT_MEDIATOR_BASE_URL!, key: process.env.AGENT_MEDIATOR_KEY!, temp:0.3, maxTokens:700 };
 const client = (a: Agent) => new OpenAI({ apiKey: a.key, baseURL: a.baseURL });
 
 // --- Helpers
@@ -53,10 +53,10 @@ async function ask(a: Agent, msgs: {role:'system'|'user'|'assistant', content:st
     const responseTime = Date.now() - startTime;
     console.error(`❌ Error asking ${a.name} after ${responseTime}ms:`, error);
     console.error(`🔍 Error details:`, {
-      name: error.name,
-      message: error.message,
-      status: error.status,
-      code: error.code
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : String(error),
+      status: (error as any)?.status,
+      code: (error as any)?.code
     });
     throw error;
   }

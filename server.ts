@@ -20,7 +20,8 @@ app.post('/api/debate', async (req, res) => {
     const { topic } = req.body;
     
     if (!topic || typeof topic !== 'string') {
-      return res.status(400).json({ error: 'Topic is required and must be a string' });
+      res.status(400).json({ error: 'Topic is required and must be a string' });
+      return;
     }
 
     console.log(`🎯 Starting debate via API: "${topic}"`);

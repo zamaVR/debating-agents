@@ -53,10 +53,10 @@ async function ask(a: Agent, msgs: {role:'system'|'user'|'assistant', content:st
     const responseTime = Date.now() - startTime;
     console.error(`❌ Error asking ${a.name} after ${responseTime}ms:`, error);
     console.error(`🔍 Error details:`, {
-      name: error.name,
-      message: error.message,
-      status: error.status,
-      code: error.code
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : String(error),
+      status: (error as any)?.status,
+      code: (error as any)?.code
     });
     throw error;
   }
