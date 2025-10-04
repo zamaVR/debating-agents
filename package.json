@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx server.ts",
     "start": "node dist/server.js",
-    "build": "tsc && cp -r public dist/"
+    "build": "tsc && (test -d public && cp -r public dist/ || echo 'Warning: public directory not found')"
   },
   "keywords": [],
   "author": "",
