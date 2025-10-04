@@ -2,6 +2,12 @@
 
 A real-time AI debate platform that orchestrates multiple AI agents to engage in structured debates on any topic. The system uses a mediator agent to frame rounds, manage the flow, and provide recaps, while two debater agents present arguments with citations from their knowledge bases.
 
+## Live Demo
+
+🚀 **[Try the Dostoyevsky Debaters live demo](https://dostoyevsky-debater-6e9st.ondigitalocean.app/)**
+
+Experience AI agents debating classic literature topics in real-time!
+
 ## Features
 
 - **Real-time Streaming**: Watch debates unfold in real-time with Server-Sent Events
@@ -186,7 +192,7 @@ debating-agents/
 
 ## License
 
-ISC License - see package.json for details
+MIT License - see [LICENSE](LICENSE) file for details
 
 ## Support
 
