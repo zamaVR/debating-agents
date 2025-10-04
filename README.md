@@ -1,29 +1,85 @@
-# Debating Agents
+# Dostoyevsky Debaters
 
-A real-time AI debate platform that orchestrates multiple AI agents to engage in structured debates on any topic. The system uses a mediator agent to frame rounds, manage the flow, and provide recaps, while two debater agents present arguments with citations from their knowledge bases.
+A specialized AI debate platform focused on Fyodor Dostoyevsky's literary works. The system orchestrates three AI agents to engage in structured, scholarly debates about classic literature topics from Dostoyevsky's novels, including *Crime and Punishment*, *The Brothers Karamazov*, and other masterpieces. The platform uses a mediator agent to frame rounds, manage the flow, and provide recaps, while two debater agents present arguments with citations from their specialized knowledge bases.
 
 ## Live Demo
 
 🚀 **[Try the Dostoyevsky Debaters live demo](https://dostoyevsky-debater-6e9st.ondigitalocean.app/)**
 
-Experience AI agents debating classic literature topics in real-time!
+Experience AI agents debating classic literature topics in real-time! Watch scholarly discussions about Dostoyevsky's complex characters, philosophical themes, and moral dilemmas unfold through structured debate rounds.
 
 ## Features
 
 - **Real-time Streaming**: Watch debates unfold in real-time with Server-Sent Events
-- **Multi-Agent Architecture**: Three specialized AI agents (Debater A, Debater B, Mediator)
-- **Structured Rounds**: Organized debate format with framing, responses, and recaps
-- **Citation Support**: Agents provide citations from their knowledge bases
-- **Web Interface**: Clean, modern UI for watching debates
-- **API Endpoints**: RESTful API for programmatic access
+- **Multi-Agent Architecture**: Three specialized AI agents (General Literature Expert, Citation Specialist, Debate Mediator)
+- **Structured Debate Rounds**: Organized 4-round format with framing, responses, rebuttals, and recaps
+- **Scholarly Citations**: Agents provide specific citations with filename and chunk references
+- **Dostoyevsky Focus**: Specialized knowledge bases covering major works and themes
+- **Web Interface**: Clean, modern UI optimized for literary debate viewing
+- **API Endpoints**: RESTful API for programmatic access to debate functionality
+
+## How Debate Rounds Work
+
+The Dostoyevsky Debaters platform uses a sophisticated 4-round debate structure designed to create engaging, scholarly discussions about literary topics:
+
+### Round Structure
+
+**Round 1: Opening Arguments**
+- **Mediator Phase**: Frames the debate topic and introduces the question
+- **Agent Responses**: Both agents present their initial positions with citations
+- **Mediator Recap**: Summarizes opening arguments and identifies key points
+
+**Round 2: Rebuttals** 
+- **Mediator Phase**: Introduces rebuttal round with specific instructions
+- **Agent Responses**: Agents challenge each other's claims with concrete quotes and citations
+- **Mediator Recap**: Analyzes agreements and disagreements
+
+**Round 3: Cross-Examination**
+- **Mediator Phase**: Directs agents to examine evidence and find weaknesses
+- **Agent Responses**: Agents present counter-evidence and address opponent's key points
+- **Mediator Recap**: Evaluates the strength of arguments
+
+**Round 4: Final Arguments**
+- **Mediator Phase**: Introduces final round for strongest case presentation
+- **Agent Responses**: Agents make their strongest arguments and address key points
+- **Mediator Recap**: Provides closing summary (no winner declared)
+
+### Debate Phases Within Each Round
+
+1. **Framing**: Mediator introduces the round and provides specific instructions
+2. **Answer**: Both agents respond simultaneously with their arguments
+3. **Round Recap**: Mediator summarizes what each agent said and notes agreements/disagreements
+4. **Next Round**: Mediator introduces the next round (except after final round)
+
+### Real-Time Streaming
+
+- **Conversational Delays**: Natural pauses between responses (500-2000ms)
+- **Live Updates**: Server-Sent Events stream each phase as it happens
+- **Citation Display**: Citations appear with filename and chunk references
+- **Phase Indicators**: Clear labeling of each debate phase
 
 ## Architecture
 
-The system consists of three AI agents:
+The system consists of three specialized AI agents:
 
-1. **Agent A**: General knowledge assistant providing factual information
-2. **Agent B**: Knowledge base specialist requiring citations for all claims
-3. **Mediator**: Debate moderator managing rounds and flow
+1. **Agent A (General Literature Expert)**: Provides broad literary knowledge and context about Dostoyevsky's works, characters, and themes
+2. **Agent B (Citation Specialist)**: Requires specific citations for all claims, using only knowledge base content with [filename, chunk #] references
+3. **Mediator (Debate Moderator)**: Manages debate flow, frames rounds, provides recaps, and guides the scholarly discussion
+
+## Sample Debate Topics
+
+The platform comes pre-configured with classic Dostoyevsky debate topics:
+
+- **"Does 'The Grand Inquisitor' claim that freedom is a burden rather than a gift?"**
+- **"Is Raskolnikov's crime in Crime and Punishment justified by his theory of extraordinary men?"**
+- **"Does Dostoevsky present Sonya as a true moral exemplar in Crime and Punishment?"**
+
+These topics explore Dostoyevsky's central themes of:
+- Moral philosophy and ethical dilemmas
+- The nature of freedom vs. security
+- Psychological complexity of characters
+- Religious and existential questions
+- Social criticism and human nature
 
 ## Prerequisites
 
@@ -90,7 +146,7 @@ npm start
 Request body:
 ```json
 {
-  "topic": "Should artificial intelligence be regulated?"
+  "topic": "Does 'The Grand Inquisitor' claim that freedom is a burden rather than a gift?"
 }
 ```
 
@@ -170,15 +226,18 @@ Set these environment variables in your Digital Ocean App Platform settings:
 ## Project Structure
 
 ```
-debating-agents/
+dostoyevsky-debaters/
 ├── public/
-│   └── index.html          # Frontend interface
-├── debate-api.ts           # Core debate logic and agent orchestration
+│   └── index.html          # Frontend interface with Dostoyevsky topics
+├── debate-api.ts           # Core debate logic and 4-round orchestration
 ├── server.ts              # Express server and API endpoints
 ├── debate.ts              # Legacy debate implementation
 ├── test-agents.ts         # Agent testing utilities
 ├── package.json           # Dependencies and scripts
 ├── tsconfig.json          # TypeScript configuration
+├── LICENSE                # MIT License
+├── CONTRIBUTORS.md        # Contribution guidelines
+├── CODE_OF_CONDUCT.md     # Community standards
 └── README.md             # This file
 ```
 
